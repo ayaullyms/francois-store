@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Вход</title>
+</head>
+<body>
+  <h1>Вход</h1>
+  <form id="loginForm">
+    <input type="email" name="email" placeholder="Email" required>
+    <input type="password" name="password" placeholder="Пароль" required>
+    <button type="submit">Войти</button>
+  </form>
+  <div id="message"></div>
+  <script>
+    const form = document.getElementById('loginForm');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
+      try {
+        const response = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        const result = await response.json();
+        if (result.token) {
+          document.getElementById('message').innerText = 'Вход успешен! Токен: ' + result.token;
+        } else {
+          document.getElementById('message').innerText = result.message || 'Ошибка при входе';
+        }
+      } catch (error) {
+        document.getElementById('message').innerText = 'Ошибка при входе';
+      }
+    });
+  </script>
+</body>
+</html>

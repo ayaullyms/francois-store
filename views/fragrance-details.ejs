@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title><%= fragrance.name %> - Details</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header class="navbar">
+    <div class="brand">Francois</div>
+    <nav>
+      <ul>
+        <li><a href="/profile">Profile</a></li>
+        <li><a href="/catalogue">Catalogue</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="details-container">
+    <img src="<%= fragrance.image || '/images/default.jpg' %>" alt="<%= fragrance.name %>" class="fragrance-img">
+    <h1><%= fragrance.name %> - <%= fragrance.brand %></h1>
+    <p><strong>Notes:</strong> <%= fragrance.scent.join(', ') %></p>
+    <p><strong>Available Sizes:</strong> 
+      <%= Object.entries(fragrance.sizes).map(([size, price]) => `${size}: $${price}`).join(', ') %>
+    </p>
+    <a href="/catalogue" class="details-button">Back to Catalogue</a>
+  </main>
+</body>
+</html>

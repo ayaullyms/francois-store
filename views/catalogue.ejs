@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Fragrance Catalog</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header class="navbar">
+    <div class="brand">Francois</div>
+    <nav>
+      <ul>
+        <li><a href="/profile">Profile</a></li>
+        <li><a href="/catalogue">Catalogue</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <h1 class="catalog-title">Fragrance Catalog</h1>
+
+    <div class="filters">
+      <select id="genderFilter">
+        <option value="">Gender</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+        <option value="Unisex">Unisex</option>
+      </select>
+
+      <select id="sortFilter">
+        <option value="">Sort By</option>
+        <option value="name-asc">Name (A-Z)</option>
+        <option value="name-desc">Name (Z-A)</option>
+        <option value="price-asc">Price (Low-High)</option>
+        <option value="price-desc">Price (High-Low)</option>
+      </select>
+
+      <button onclick="fetchFragrances()">Apply</button>
+    </div>
+
+    <!-- Catalog -->
+    <div id="catalog" class="catalog-container"></div>
+  </main>
+
+  <script>
+    async function fetchFragrances() {
+      let gender = document.getElementById("genderFilter").value;
+      let sort = document.getElementById("sortFilter").value.split('-');
+      let query = [];
+
+      if (gender) query.push(`gender=${gender}`);
+      if (sort.length === 2) query.push(`sortBy=${sort[0]}&order=${sort[1]}`);
+
+      let url = `/api/fragrances?${query.join('&')}`;
+      let res = await fetch(url);
+      let fragrances = await res.json();
+      
+      let catalog = document.getElementById("catalog");
+      catalog.innerHTML = fragrances.map(frag => `
+        <div class="fragrance-card">
+          <img src="${frag.image || '/images/default.jpg'}" alt="${frag.name}" class="fragrance-img">
+          <div class="fragrance-info">
+            <h3>${frag.name} - ${frag.brand}</h3>
+            <p class="fragrance-notes"><strong>Notes:</strong> ${frag.scent.join(', ')}</p>
+            <p class="fragrance-sizes">
+              <strong>Available Sizes:</strong> 
+              ${Object.entries(frag.sizes).map(([size, price]) => `${size}: $${price}`).join(', ')}
+            </p>
+            <a href="/fragrance/${frag._id}" class="details-button">View Details</a>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    fetchFragrances();
+  </script>
+</body>
+</html>
